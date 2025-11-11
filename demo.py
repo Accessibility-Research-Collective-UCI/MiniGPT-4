@@ -55,7 +55,7 @@ def setup_seeds(config):
 conv_dict = {'pretrain_vicuna0': CONV_VISION_Vicuna0,
              'pretrain_llama2': CONV_VISION_LLama2}
 
-print('Initializing Chat')
+print('Initializing Chat', flush=True)
 args = parse_args()
 cfg = Config(args)
 
@@ -74,7 +74,7 @@ stop_words_ids = [torch.tensor(ids).to(device='cuda:{}'.format(args.gpu_id)) for
 stopping_criteria = StoppingCriteriaList([StoppingCriteriaSub(stops=stop_words_ids)])
 
 chat = Chat(model, vis_processor, device='cuda:{}'.format(args.gpu_id), stopping_criteria=stopping_criteria)
-print('Initialization Finished')
+print('Initialization Finished', flush=True)
 
 
 # ========================================
