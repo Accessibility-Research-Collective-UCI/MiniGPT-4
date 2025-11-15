@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import cv2
@@ -365,9 +365,9 @@ class VideoRandomAugment(object):
         return [(op, self.M) for op in sampled_ops]
 
     def __call__(self, frames):
-        assert (
-            frames.shape[-1] == 3
-        ), "Expecting last dimension for 3-channels RGB (b, h, w, c)."
+        assert frames.shape[-1] == 3, (
+            "Expecting last dimension for 3-channels RGB (b, h, w, c)."
+        )
 
         if self.tensor_in_tensor_out:
             frames = frames.numpy().astype(np.uint8)

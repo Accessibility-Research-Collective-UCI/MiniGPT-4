@@ -1,15 +1,14 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import re
 
 from minigpt4.common.registry import registry
 from minigpt4.processors.base_processor import BaseProcessor
-from minigpt4.processors.randaugment import RandomAugment
 from omegaconf import OmegaConf
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
@@ -70,13 +69,15 @@ class BlipCaptionProcessor(BaseProcessor):
 
 @registry.register_processor("blip2_image_train")
 class Blip2ImageTrainProcessor(BlipImageBaseProcessor):
-    def __init__(self, image_size=224, mean=None, std=None, min_scale=0.5, max_scale=1.0):
+    def __init__(
+        self, image_size=224, mean=None, std=None, min_scale=0.5, max_scale=1.0
+    ):
         super().__init__(mean=mean, std=std)
 
         self.transform = transforms.Compose(
             [
                 transforms.Resize(
-                    (image_size,image_size),
+                    (image_size, image_size),
                     interpolation=InterpolationMode.BICUBIC,
                 ),
                 transforms.ToTensor(),

@@ -17,13 +17,10 @@ import traceback
 import torch
 import json
 
-class MiniGPT4Captioner():
 
-    def __init__(
-        self,
-        prompt = "Describe this image."
-    ):
-         self.prompt = prompt
+class MiniGPT4Captioner:
+    def __init__(self, prompt="Describe this image."):
+        self.prompt = prompt
 
     # ------------------- Image Processing -------------------
     def remove_transparency(self, im, bg_colour=(255, 255, 255)):
@@ -51,7 +48,7 @@ class MiniGPT4Captioner():
 
         else:
             return im
-        
+
     def convert_to_base64(self, image_url):
         """
         Convert an image, specified by its url, to a PNG and return the base64 encoded string.
@@ -73,7 +70,7 @@ class MiniGPT4Captioner():
             f.seek(0)
 
             return base64.b64encode(f.read()).decode("utf-8")
-        
+
     def convert_to_png(self, image_url):
         response = requests.get(image_url)
         image = Image.open(BytesIO(response.content))
@@ -87,12 +84,7 @@ class MiniGPT4Captioner():
 
     # ------------------- Caption Generation -------------------
     def get_minigpt_caption(
-            self,
-            image_url,
-            model,
-            processor,
-            temperature=1.0,
-            top_p=0.95
+        self, image_url, model, processor, temperature=1.0, top_p=0.95
     ):
         conv_temp = CONV_VISION_minigptv2.copy()
         conv_temp.system = ""
@@ -100,9 +92,9 @@ class MiniGPT4Captioner():
 
         img = Image.open(io.BytesIO(self.convert_to_png(image_url)))
 
-        if img.mode == 'L':
+        if img.mode == "L":
             print("Wrong mode!")
-            img = img.convert('RGB')
+            img = img.convert("RGB")
         img = torch.unsqueeze(processor(img), 0)
 
         texts = prepare_texts([self.prompt], conv_temp)
@@ -113,44 +105,41 @@ class MiniGPT4Captioner():
             max_new_tokens=500,
             do_sample=True,
             temperature=temperature,
-            top_p=top_p
+            top_p=top_p,
         )
 
         return answers[0]
 
-    def load_minigpt_model(
-            self,
-            args
-    ):
+    def load_minigpt_model(self, args):
         return init_model(args)
-    
+
     def generate_dataset(
-            self,
-            args,
-            dataset,
-            save_folder='/home/ngtj/MiniGPT-4/data/',
-            file_prefix='minigpt',
-            model_key='minigpt',
-            temp=1.0,
-            top_p=0.95,
-            half=None
+        self,
+        args,
+        dataset,
+        save_folder="/home/ngtj/MiniGPT-4/data/",
+        file_prefix="minigpt",
+        model_key="minigpt",
+        temp=1.0,
+        top_p=0.95,
+        half=None,
     ):
-        print(f"Starting to caption...", flush=True)
+        print("Starting to caption...", flush=True)
         out_json = copy.deepcopy(dataset)
-        tmp_dir = os.path.join(save_folder, 'tmp')
+        tmp_dir = os.path.join(save_folder, "tmp")
         os.makedirs(save_folder, exist_ok=True)
         os.makedirs(tmp_dir, exist_ok=True)
 
         model, vis_processor = self.load_minigpt_model(args)
 
-        print(f"Done loading model.", flush=True)
+        print("Done loading model.", flush=True)
         try:
             for i, dat in enumerate(dataset):
                 if half == 1 and i > len(dataset) // 2:
                     continue
                 elif half == 2 and i <= len(dataset) // 2:
                     continue
-                
+
                 # minigpt messed up
                 if i < 689:
                     continue
@@ -158,55 +147,60 @@ class MiniGPT4Captioner():
                 print(f"{i}: {dat['file_name']}", flush=True)
 
                 # generate reference
-                print(f"\tGenerating ref...")
+                print("\tGenerating ref...")
                 start = time.perf_counter()
                 cap = self.get_minigpt_caption(
                     model=model,
                     processor=vis_processor,
-                    image_url=dat['image_url'],
+                    image_url=dat["image_url"],
                     temperature=temp,
-                    top_p=top_p)
+                    top_p=top_p,
+                )
                 print(f"\t{cap}")
-                out_json[i]['captions'][model_key]['reference_caption'] = cap
+                out_json[i]["captions"][model_key]["reference_caption"] = cap
                 print(f"\tDone in {time.perf_counter() - start} s.", flush=True)
 
                 # generate samples
-                print(f"\tGenerating samples...")
+                print("\tGenerating samples...")
                 for sample_idx in range(10):
-                    print(f"\t\tSample {sample_idx+1}...")
+                    print(f"\t\tSample {sample_idx + 1}...")
                     start = time.perf_counter()
                     cap = self.get_minigpt_caption(
                         model=model,
                         processor=vis_processor,
-                        image_url=dat['image_url'],
+                        image_url=dat["image_url"],
                         temperature=temp,
-                        top_p=top_p)
+                        top_p=top_p,
+                    )
                     print(f"\t\t{cap}")
 
-                    out_json[i]['captions'][model_key]['samples'][sample_idx] = cap
+                    out_json[i]["captions"][model_key]["samples"][sample_idx] = cap
                     print(f"\t\tDone in {time.perf_counter() - start} s.", flush=True)
-                
+
                 # write every 50 iters?
                 if i % 50 == 0 and i > 0:
                     date = datetime.now()
                     tmp_name = f"cached_{file_prefix}_{half}_{date.year:04}{date.month:02}{date.day:02}_{date.hour:02}{date.minute:02}{date.second:02}.json"
-                    with open(os.path.join(tmp_dir, tmp_name), 'w') as f:
+                    with open(os.path.join(tmp_dir, tmp_name), "w") as f:
                         f.write(json.dumps(out_json, indent=2))
-                    print(f"Intermediate file {tmp_name} saved to {tmp_dir}", flush=True)
+                    print(
+                        f"Intermediate file {tmp_name} saved to {tmp_dir}", flush=True
+                    )
 
         except Exception:
             print(f"Error: {traceback.format_exc()}")
         finally:
             # write json to file
             date = datetime.now()
-            outfile_name = f'{file_prefix}_{half}_{date.year:04}{date.month:02}{date.day:02}_{date.hour:02}{date.minute:02}{date.second:02}.json'
-            with open(os.path.join(save_folder, outfile_name), 'w') as f:
+            outfile_name = f"{file_prefix}_{half}_{date.year:04}{date.month:02}{date.day:02}_{date.hour:02}{date.minute:02}{date.second:02}.json"
+            with open(os.path.join(save_folder, outfile_name), "w") as f:
                 f.write(json.dumps(out_json, indent=2))
 
+
 if __name__ == "__main__":
-    '''
+    """
     python /home/ngtj/MiniGPT-4/test_minigpt.py --cfg-path eval_configs/minigpt4_llama2_eval.yaml --gpu-id 0
-    '''
+    """
     parser = eval_parser()
     args = parser.parse_args()
     captioner = MiniGPT4Captioner()
@@ -214,16 +208,12 @@ if __name__ == "__main__":
 
     # read HAT
     print("Reading HAT dataset...", flush=True)
-    hat_file = './data/hat_empty_prepared.json'
+    hat_file = "./data/hat_empty_prepared.json"
 
-    with open(hat_file, 'r', encoding='utf-8') as f:
+    with open(hat_file, "r", encoding="utf-8") as f:
         hat_data = json.load(f)
 
     print("Success!", flush=True)
 
     # make all the captions
-    captioner.generate_dataset(
-        args,
-        hat_data,
-        half=1
-    )
+    captioner.generate_dataset(args, hat_data, half=1)

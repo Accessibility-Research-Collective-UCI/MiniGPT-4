@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import io
@@ -38,11 +38,6 @@ def now():
     return datetime.now().strftime("%Y%m%d%H%M")[:-1]
 
 
-def is_url(url_or_filename):
-    parsed = urlparse(url_or_filename)
-    return parsed.scheme in ("http", "https")
-
-
 def get_cache_path(rel_path):
     return os.path.expanduser(os.path.join(registry.get_path("cache_root"), rel_path))
 
@@ -59,20 +54,6 @@ def load_json(filename):
 # The following are adapted from torchvision and vissl
 # torchvision: https://github.com/pytorch/vision
 # vissl: https://github.com/facebookresearch/vissl/blob/main/vissl/utils/download.py
-
-
-def makedir(dir_path):
-    """
-    Create the directory if it does not exist.
-    """
-    is_success = False
-    try:
-        if not g_pathmgr.exists(dir_path):
-            g_pathmgr.mkdirs(dir_path)
-        is_success = True
-    except BaseException:
-        print(f"Error creating directory: {dir_path}")
-    return is_success
 
 
 def get_redirected_url(url: str):
@@ -115,7 +96,6 @@ def download_google_drive_url(url: str, output_path: str, output_file_name: str)
     import requests
 
     with requests.Session() as session:
-
         # First get the confirmation token and append it to the URL
         with session.get(url, stream=True, allow_redirects=True) as response:
             for k, v in response.cookies.items():

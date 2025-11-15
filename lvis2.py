@@ -12,18 +12,14 @@ if __name__ == "__main__":
 
     # read HAT
     print("Reading LVIS dataset...", flush=True)
-    lvis_file = './data/LVIS/lvis_1000_empty.json'
+    lvis_file = "./data/LVIS/lvis_1000_empty.json"
 
-    with open(lvis_file, 'r', encoding='utf-8') as f:
+    with open(lvis_file, "r", encoding="utf-8") as f:
         lvis_data = json.load(f)
 
     print("Success!", flush=True)
 
     # make all the captions
     captioner.generate_dataset(
-        args,
-        lvis_data,
-        file_prefix="lvis_minigpt",
-        model_key='gptmini',
-        half=2
+        args, lvis_data, file_prefix="lvis_minigpt", model_key="gptmini", half=2
     )

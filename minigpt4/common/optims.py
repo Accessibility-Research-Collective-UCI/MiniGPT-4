@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import math
@@ -21,7 +21,7 @@ class LinearWarmupStepLRScheduler:
         decay_rate=1,
         warmup_start_lr=-1,
         warmup_steps=0,
-        **kwargs
+        **kwargs,
     ):
         self.optimizer = optimizer
 
@@ -64,7 +64,7 @@ class LinearWarmupCosineLRScheduler:
         init_lr,
         warmup_steps=0,
         warmup_start_lr=-1,
-        **kwargs
+        **kwargs,
     ):
         self.optimizer = optimizer
 

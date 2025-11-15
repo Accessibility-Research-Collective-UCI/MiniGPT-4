@@ -1,9 +1,9 @@
 """
- This file is from
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+This file is from
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import logging
@@ -19,7 +19,6 @@ import minigpt4.common.utils as utils
 from minigpt4.common.dist_utils import is_dist_avail_and_initialized, is_main_process
 from minigpt4.common.registry import registry
 from minigpt4.processors.base_processor import BaseProcessor
-
 
 
 class BaseDatasetBuilder:
@@ -150,7 +149,6 @@ class BaseDatasetBuilder:
                     download_url(url=url_or_filename, root=dirname, filename=filename)
 
     def _download_vis(self):
-
         storage_path = self.config.build_info.get(self.data_type).storage
         storage_path = utils.get_cache_path(storage_path)
 

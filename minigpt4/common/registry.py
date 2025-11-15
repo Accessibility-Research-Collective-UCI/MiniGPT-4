@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 
@@ -32,12 +32,14 @@ class Registry:
         """
 
         def wrap(builder_cls):
-            from minigpt4.datasets.builders.base_dataset_builder import BaseDatasetBuilder
+            from minigpt4.datasets.builders.base_dataset_builder import (
+                BaseDatasetBuilder,
+            )
 
-            assert issubclass(
-                builder_cls, BaseDatasetBuilder
-            ), "All builders must inherit BaseDatasetBuilder class, found {}".format(
-                builder_cls
+            assert issubclass(builder_cls, BaseDatasetBuilder), (
+                "All builders must inherit BaseDatasetBuilder class, found {}".format(
+                    builder_cls
+                )
             )
             if name in cls.mapping["builder_name_mapping"]:
                 raise KeyError(
@@ -65,9 +67,9 @@ class Registry:
         def wrap(task_cls):
             from minigpt4.tasks.base_task import BaseTask
 
-            assert issubclass(
-                task_cls, BaseTask
-            ), "All tasks must inherit BaseTask class"
+            assert issubclass(task_cls, BaseTask), (
+                "All tasks must inherit BaseTask class"
+            )
             if name in cls.mapping["task_name_mapping"]:
                 raise KeyError(
                     "Name '{}' already registered for {}.".format(
@@ -94,9 +96,9 @@ class Registry:
         def wrap(model_cls):
             from minigpt4.models import BaseModel
 
-            assert issubclass(
-                model_cls, BaseModel
-            ), "All models must inherit BaseModel class"
+            assert issubclass(model_cls, BaseModel), (
+                "All models must inherit BaseModel class"
+            )
             if name in cls.mapping["model_name_mapping"]:
                 raise KeyError(
                     "Name '{}' already registered for {}.".format(
@@ -123,9 +125,9 @@ class Registry:
         def wrap(processor_cls):
             from minigpt4.processors import BaseProcessor
 
-            assert issubclass(
-                processor_cls, BaseProcessor
-            ), "All processors must inherit BaseProcessor class"
+            assert issubclass(processor_cls, BaseProcessor), (
+                "All processors must inherit BaseProcessor class"
+            )
             if name in cls.mapping["processor_name_mapping"]:
                 raise KeyError(
                     "Name '{}' already registered for {}.".format(

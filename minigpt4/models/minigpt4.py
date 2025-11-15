@@ -23,24 +23,24 @@ class MiniGPT4(MiniGPTBase):
     }
 
     def __init__(
-            self,
-            vit_model="eva_clip_g",
-            q_former_model="https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_flant5xxl.pth",
-            img_size=224,
-            drop_path_rate=0,
-            use_grad_checkpoint=False,
-            vit_precision="fp16",
-            freeze_vit=True,
-            has_qformer=True,
-            freeze_qformer=True,
-            num_query_token=32,
-            llama_model="",
-            prompt_path="",
-            prompt_template="",
-            max_txt_len=32,
-            end_sym='\n',
-            low_resource=False,  # use 8 bit and put vit in cpu
-            device_8bit=0,  # the device of 8bit model should be set when loading and cannot be changed anymore.
+        self,
+        vit_model="eva_clip_g",
+        q_former_model="https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_flant5xxl.pth",
+        img_size=224,
+        drop_path_rate=0,
+        use_grad_checkpoint=False,
+        vit_precision="fp16",
+        freeze_vit=True,
+        has_qformer=True,
+        freeze_qformer=True,
+        num_query_token=32,
+        llama_model="",
+        prompt_path="",
+        prompt_template="",
+        max_txt_len=32,
+        end_sym="\n",
+        low_resource=False,  # use 8 bit and put vit in cpu
+        device_8bit=0,  # the device of 8bit model should be set when loading and cannot be changed anymore.
     ):
         super().__init__(
             vit_model=vit_model,
@@ -58,29 +58,31 @@ class MiniGPT4(MiniGPTBase):
 
         self.has_qformer = has_qformer
         if self.has_qformer:
-            print('Loading Q-Former')
+            print("Loading Q-Former")
             self.Qformer, self.query_tokens = self.init_Qformer(
                 num_query_token, self.visual_encoder.num_features, freeze_qformer
             )
-            self.load_from_pretrained(url_or_filename=q_former_model)  # load q-former weights here
+            self.load_from_pretrained(
+                url_or_filename=q_former_model
+            )  # load q-former weights here
 
             img_f_dim = self.Qformer.config.hidden_size
-            print('Loading Q-Former Done')
+            print("Loading Q-Former Done")
         else:
             img_f_dim = self.visual_encoder.num_features * 4
-            print('Do not use Q-Former here.')
+            print("Do not use Q-Former here.")
 
-        self.llama_proj = nn.Linear(
-            img_f_dim, self.llama_model.config.hidden_size
-        )
+        self.llama_proj = nn.Linear(img_f_dim, self.llama_model.config.hidden_size)
 
         if prompt_path:
-            with open(prompt_path, 'r') as f:
+            with open(prompt_path, "r") as f:
                 raw_prompts = f.read().splitlines()
-            filted_prompts = [raw_prompt for raw_prompt in raw_prompts if "<ImageHere>" in raw_prompt]
+            filted_prompts = [
+                raw_prompt for raw_prompt in raw_prompts if "<ImageHere>" in raw_prompt
+            ]
             self.prompt_list = [prompt_template.format(p) for p in filted_prompts]
-            print('Load {} training prompts'.format(len(self.prompt_list)))
-            print('Prompt Example \n{}'.format(random.choice(self.prompt_list)))
+            print("Load {} training prompts".format(len(self.prompt_list)))
+            print("Prompt Example \n{}".format(random.choice(self.prompt_list)))
         else:
             self.prompt_list = []
 
@@ -124,7 +126,9 @@ class MiniGPT4(MiniGPTBase):
         with self.maybe_autocast():
             image_embeds = self.ln_vision(self.visual_encoder(image)).to(device)
             if self.has_qformer:
-                image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(device)
+                image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(
+                    device
+                )
 
                 query_tokens = self.query_tokens.expand(image_embeds.shape[0], -1, -1)
                 query_output = self.Qformer.bert(
@@ -141,13 +145,18 @@ class MiniGPT4(MiniGPTBase):
                 image_embeds = image_embeds.view(bs, int(pn / 4), int(hs * 4))
 
                 inputs_llama = self.llama_proj(image_embeds)
-            atts_llama = torch.ones(inputs_llama.size()[:-1], dtype=torch.long).to(image.device)
+            atts_llama = torch.ones(inputs_llama.size()[:-1], dtype=torch.long).to(
+                image.device
+            )
         return inputs_llama, atts_llama
 
     @classmethod
     def from_config(cls, cfg):
         vit_model = cfg.get("vit_model", "eva_clip_g")
-        q_former_model = cfg.get("q_former_model", "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_flant5xxl.pth")
+        q_former_model = cfg.get(
+            "q_former_model",
+            "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_flant5xxl.pth",
+        )
         img_size = cfg.get("image_size")
         num_query_token = cfg.get("num_query_token")
         llama_model = cfg.get("llama_model")
@@ -164,7 +173,7 @@ class MiniGPT4(MiniGPTBase):
         prompt_path = cfg.get("prompt_path", "")
         prompt_template = cfg.get("prompt_template", "")
         max_txt_len = cfg.get("max_txt_len", 32)
-        end_sym = cfg.get("end_sym", '\n')
+        end_sym = cfg.get("end_sym", "\n")
 
         model = cls(
             vit_model=vit_model,
@@ -190,6 +199,6 @@ class MiniGPT4(MiniGPTBase):
         if ckpt_path:
             print("Load MiniGPT-4 Checkpoint: {}".format(ckpt_path))
             ckpt = torch.load(ckpt_path, map_location="cpu")
-            msg = model.load_state_dict(ckpt['model'], strict=False)
+            msg = model.load_state_dict(ckpt["model"], strict=False)
 
         return model

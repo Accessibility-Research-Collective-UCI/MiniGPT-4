@@ -1,26 +1,24 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import os
-import json
 import torch
-import numpy as np
 
 from PIL import Image
 from PIL import ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-from minigpt4.datasets.datasets.caption_datasets import COCOCaptionDataset, CaptionEvalDataset
+from minigpt4.datasets.datasets.caption_datasets import (
+    COCOCaptionDataset,
+    CaptionEvalDataset,
+)
 
 COCOCapDataset = COCOCaptionDataset
-
-
-
 
 
 class COCOCapEvalDataset(CaptionEvalDataset):
@@ -83,16 +81,17 @@ class RefCOCOEvalData(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.loaded_data)
-    
+
     def __getitem__(self, idx):
         data = self.loaded_data[idx]
-        img_id = data['img_id']
-        sent = data['sents']
-        image_path = os.path.join(self.root_path, f'{img_id[:27]}.jpg')
-        image = Image.open(image_path).convert('RGB')
+        img_id = data["img_id"]
+        sent = data["sents"]
+        image_path = os.path.join(self.root_path, f"{img_id[:27]}.jpg")
+        image = Image.open(image_path).convert("RGB")
         image = self.vis_processor(image)
         question = f"[refer] give me the location of {sent}"
         return image, question, img_id
+
 
 class EvalCaptionData(torch.utils.data.Dataset):
     def __init__(self, loaded_data, vis_processor, root_path):
@@ -101,20 +100,20 @@ class EvalCaptionData(torch.utils.data.Dataset):
         self.vis_processor = vis_processor
         ann = dict()
         for item in self.loaded_data:
-            image_id = item['image_id']
-            ann[image_id] = item['image']
-        self.ann = [{'image_id':image_id, 'image': ann[image_id]} for image_id in ann]
+            image_id = item["image_id"]
+            ann[image_id] = item["image"]
+        self.ann = [{"image_id": image_id, "image": ann[image_id]} for image_id in ann]
 
     def __len__(self):
         return len(self.ann)
-    
+
     def __getitem__(self, idx):
         data = self.ann[idx]
-        image_id = data['image_id']
-        img_file = data['image'].split('/')[-1]
+        image_id = data["image_id"]
+        img_file = data["image"].split("/")[-1]
         image_path = os.path.join(self.root_path, img_file)
-        image = Image.open(image_path).convert('RGB')
-            
+        image = Image.open(image_path).convert("RGB")
+
         image = self.vis_processor(image)
-        question = f"[caption] please describe this image?"
+        question = "[caption] please describe this image?"
         return image, question, image_id

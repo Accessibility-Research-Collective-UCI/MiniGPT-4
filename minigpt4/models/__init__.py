@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import logging
@@ -17,13 +17,7 @@ from minigpt4.models.minigpt_v2 import MiniGPTv2
 from minigpt4.processors.base_processor import BaseProcessor
 
 
-__all__ = [
-    "load_model",
-    "BaseModel",
-    "MiniGPTBase",
-    "MiniGPT4",
-    "MiniGPTv2"
-]
+__all__ = ["load_model", "BaseModel", "MiniGPTBase", "MiniGPT4", "MiniGPTv2"]
 
 
 def load_model(name, model_type, is_eval=False, device="cpu", checkpoint=None):

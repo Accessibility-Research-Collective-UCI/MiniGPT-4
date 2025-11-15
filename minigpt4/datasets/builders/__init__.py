@@ -1,23 +1,19 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 from minigpt4.datasets.builders.base_dataset_builder import load_dataset_config
 from minigpt4.datasets.builders.image_text_pair_builder import (
     CCSBUBuilder,
     LaionBuilder,
-    CCSBUAlignBuilder
+    CCSBUAlignBuilder,
 )
 from minigpt4.common.registry import registry
 
-__all__ = [
-    "CCSBUBuilder",
-    "LaionBuilder",
-    "CCSBUAlignBuilder"
-]
+__all__ = ["CCSBUBuilder", "LaionBuilder", "CCSBUAlignBuilder"]
 
 
 def load_dataset(name, cfg_path=None, vis_path=None, data_type=None):
@@ -48,9 +44,9 @@ def load_dataset(name, cfg_path=None, vis_path=None, data_type=None):
             # use default data type in the config
             data_type = builder.config.data_type
 
-        assert (
-            data_type in builder.config.build_info
-        ), f"Invalid data_type {data_type} for {name}."
+        assert data_type in builder.config.build_info, (
+            f"Invalid data_type {data_type} for {name}."
+        )
 
         builder.config.build_info.get(data_type).storage = vis_path
 
