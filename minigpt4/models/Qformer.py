@@ -1,40 +1,27 @@
 """
- * Copyright (c) 2023, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- * By Junnan Li
- * Based on huggingface code base
- * https://github.com/huggingface/transformers/blob/v4.15.0/src/transformers/models/bert
+* Copyright (c) 2023, salesforce.com, inc.
+* All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause
+* For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+* By Junnan Li
+* Based on huggingface code base
+* https://github.com/huggingface/transformers/blob/v4.15.0/src/transformers/models/bert
 """
 
 import math
-import os
-import warnings
-from dataclasses import dataclass
-from typing import Optional, Tuple, Dict, Any
+from typing import Tuple
 
 import torch
-from torch import Tensor, device, dtype, nn
+from torch import Tensor, device, nn
 import torch.utils.checkpoint
-from torch import nn
 from torch.nn import CrossEntropyLoss
-import torch.nn.functional as F
 
 from transformers.activations import ACT2FN
-from transformers.file_utils import (
-    ModelOutput,
-)
 from transformers.modeling_outputs import (
     BaseModelOutputWithPastAndCrossAttentions,
     BaseModelOutputWithPoolingAndCrossAttentions,
     CausalLMOutputWithCrossAttentions,
     MaskedLMOutput,
-    MultipleChoiceModelOutput,
-    NextSentencePredictorOutput,
-    QuestionAnsweringModelOutput,
-    SequenceClassifierOutput,
-    TokenClassifierOutput,
 )
 from transformers.modeling_utils import (
     PreTrainedModel,
@@ -176,7 +163,6 @@ class BertSelfAttention(nn.Module):
         past_key_value=None,
         output_attentions=False,
     ):
-
         # If this is instantiated as a cross-attention module, the keys
         # and values come from an encoder; the attention mask needs to be
         # such that the encoder's padding tokens are not attended to.
@@ -523,7 +509,6 @@ class BertEncoder(nn.Module):
             past_key_value = past_key_values[i] if past_key_values is not None else None
 
             if getattr(self.config, "gradient_checkpointing", False) and self.training:
-
                 if use_cache:
                     logger.warn(
                         "`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`..."
@@ -899,7 +884,7 @@ class BertModel(BertPreTrainedModel):
         # If a 2D or 3D attention mask is provided for the cross-attention
         # we need to make broadcastable to [batch_size, num_heads, seq_length, seq_length]
         if encoder_hidden_states is not None:
-            if type(encoder_hidden_states) == list:
+            if type(encoder_hidden_states) is list:
                 encoder_batch_size, encoder_sequence_length, _ = encoder_hidden_states[
                     0
                 ].size()
@@ -911,7 +896,7 @@ class BertModel(BertPreTrainedModel):
                 ) = encoder_hidden_states.size()
             encoder_hidden_shape = (encoder_batch_size, encoder_sequence_length)
 
-            if type(encoder_attention_mask) == list:
+            if type(encoder_attention_mask) is list:
                 encoder_extended_attention_mask = [
                     self.invert_attention_mask(mask) for mask in encoder_attention_mask
                 ]
@@ -966,7 +951,6 @@ class BertModel(BertPreTrainedModel):
 
 
 class BertLMHeadModel(BertPreTrainedModel):
-
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
     _keys_to_ignore_on_load_missing = [r"position_ids", r"predictions.decoder.bias"]
 
@@ -1129,7 +1113,6 @@ class BertLMHeadModel(BertPreTrainedModel):
 
 
 class BertForMaskedLM(BertPreTrainedModel):
-
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
     _keys_to_ignore_on_load_missing = [r"position_ids", r"predictions.decoder.bias"]
 

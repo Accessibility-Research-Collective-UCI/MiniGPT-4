@@ -1,12 +1,11 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import argparse
-import os
 import random
 
 import numpy as np
@@ -18,10 +17,6 @@ import minigpt4.tasks as tasks
 from minigpt4.common.config import Config
 from minigpt4.common.dist_utils import get_rank, init_distributed_mode
 from minigpt4.common.logger import setup_logger
-from minigpt4.common.optims import (
-    LinearWarmupCosineLRScheduler,
-    LinearWarmupStepLRScheduler,
-)
 from minigpt4.common.registry import registry
 from minigpt4.common.utils import now
 

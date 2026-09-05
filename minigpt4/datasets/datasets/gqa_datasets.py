@@ -1,12 +1,11 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import os
-import json
 
 from PIL import Image
 
@@ -14,6 +13,7 @@ from minigpt4.datasets.datasets.vqa_datasets import VQADataset
 
 from collections import OrderedDict
 import random
+
 
 class __DisplMixin:
     def displ_item(self, index):
@@ -33,9 +33,9 @@ class __DisplMixin:
 class GQADataset(VQADataset, __DisplMixin):
     def __init__(self, vis_processor, text_processor, vis_root, ann_paths):
         super().__init__(vis_processor, text_processor, vis_root, ann_paths)
-        self.instruction_pool =[
+        self.instruction_pool = [
             "[vqa] {}",
-            "[vqa] Based on the image, respond to this question with a short answer: {}"
+            "[vqa] Based on the image, respond to this question with a short answer: {}",
         ]
 
     def __getitem__(self, index):
@@ -57,4 +57,3 @@ class GQADataset(VQADataset, __DisplMixin):
             "instruction_input": instruction,
             "answer": answers,
         }
-

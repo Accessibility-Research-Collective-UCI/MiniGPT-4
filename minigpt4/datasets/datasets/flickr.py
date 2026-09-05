@@ -1,21 +1,9 @@
 import os
 import json
-import pickle
 import random
-import time
-import itertools
 
-import numpy as np
 from PIL import Image
-import skimage.io as io
-import matplotlib.pyplot as plt
-from matplotlib.collections import PatchCollection
-from matplotlib.patches import Polygon, Rectangle
 from torch.utils.data import Dataset
-import webdataset as wds
-
-from minigpt4.datasets.datasets.base_dataset import BaseDataset
-from minigpt4.datasets.datasets.caption_datasets import CaptionDataset
 
 
 class GroundedDetailDataset(Dataset):
@@ -30,13 +18,13 @@ class GroundedDetailDataset(Dataset):
         self.text_processor = text_processor
 
         self.instruction_pool = [
-            '[grounding] please describe this image in details',
-            '[grounding] describe this image as detailed as possible',
-            '[grounding] summarize this image in details',
-            '[grounding] give a thorough description of what you see in this image',
+            "[grounding] please describe this image in details",
+            "[grounding] describe this image as detailed as possible",
+            "[grounding] summarize this image in details",
+            "[grounding] give a thorough description of what you see in this image",
         ]
 
-        with open(ann_path, 'r') as f:
+        with open(ann_path, "r") as f:
             self.ann = json.load(f)
 
     def __len__(self):
@@ -46,12 +34,12 @@ class GroundedDetailDataset(Dataset):
         info = self.ann[index]
 
         # image_file = 'COCO_train2014_{}.jpg'.format(info['image_id'])
-        image_file = '{}.jpg'.format(info['image_id'])
+        image_file = "{}.jpg".format(info["image_id"])
         image_path = os.path.join(self.vis_root, image_file)
         image = Image.open(image_path).convert("RGB")
         image = self.vis_processor(image)
 
-        answer = info['grounded_caption']
+        answer = info["grounded_caption"]
         instruction = random.choice(self.instruction_pool)
         instruction = "<Img><ImageHere></Img> {} ".format(instruction)
 
@@ -59,10 +47,8 @@ class GroundedDetailDataset(Dataset):
             "image": image,
             "instruction_input": instruction,
             "answer": answer,
-            "image_id": info['image_id'],
+            "image_id": info["image_id"],
         }
-
-
 
 
 class CaptionToObjectDataset(Dataset):
@@ -77,10 +63,10 @@ class CaptionToObjectDataset(Dataset):
         self.text_processor = text_processor
 
         self.instruction_pool = [
-            '[detection] {}',
+            "[detection] {}",
         ]
 
-        with open(ann_path, 'r') as f:
+        with open(ann_path, "r") as f:
             self.ann = json.load(f)
 
     def __len__(self):
@@ -89,7 +75,7 @@ class CaptionToObjectDataset(Dataset):
     def __getitem__(self, index):
         info = self.ann[index]
 
-        image_file = '{}.jpg'.format(info['image_id'])
+        image_file = "{}.jpg".format(info["image_id"])
         image_path = os.path.join(self.vis_root, image_file)
         image = Image.open(image_path).convert("RGB")
         image = self.vis_processor(image)
@@ -108,10 +94,8 @@ class CaptionToObjectDataset(Dataset):
             "image": image,
             "instruction_input": instruction,
             "answer": answer,
-            "image_id": info['image_id'],
+            "image_id": info["image_id"],
         }
-
-
 
 
 class PhraseToObjectDataset(Dataset):
@@ -126,10 +110,10 @@ class PhraseToObjectDataset(Dataset):
         self.text_processor = text_processor
 
         self.instruction_pool = [
-            '[detection] {}',
+            "[detection] {}",
         ]
 
-        with open(ann_path, 'r') as f:
+        with open(ann_path, "r") as f:
             self.ann = json.load(f)
 
     def __len__(self):
@@ -137,13 +121,13 @@ class PhraseToObjectDataset(Dataset):
 
     def __getitem__(self, index):
         info = self.ann[index]
-        image_file = '{}.jpg'.format(info['image_id'])
+        image_file = "{}.jpg".format(info["image_id"])
         image_path = os.path.join(self.vis_root, image_file)
         image = Image.open(image_path).convert("RGB")
         image = self.vis_processor(image)
 
         input = info["phrase"]
-        answer = "<p>"+input+"</p> "+info["bbox"]
+        answer = "<p>" + input + "</p> " + info["bbox"]
         instruction = random.choice(self.instruction_pool).format(input)
 
         instruction = "<Img><ImageHere></Img> {} ".format(instruction)
@@ -155,5 +139,5 @@ class PhraseToObjectDataset(Dataset):
             "image": image,
             "instruction_input": instruction,
             "answer": answer,
-            "image_id": info['image_id'],
+            "image_id": info["image_id"],
         }

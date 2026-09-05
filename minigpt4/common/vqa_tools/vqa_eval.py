@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 # coding=utf-8
@@ -191,7 +191,7 @@ class VQAEval:
         ]
 
     def evaluate(self, quesIds=None):
-        if quesIds == None:
+        if quesIds is None:
             quesIds = [quesId for quesId in self.params["question_id"]]
         gts = {}
         res = {}
@@ -250,7 +250,7 @@ class VQAEval:
         outText = inText
         for p in self.punct:
             if (p + " " in inText or " " + p in inText) or (
-                re.search(self.commaStrip, inText) != None
+                re.search(self.commaStrip, inText) is not None
             ):
                 outText = outText.replace(p, "")
             else:

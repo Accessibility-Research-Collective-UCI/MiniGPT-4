@@ -7,12 +7,25 @@ from minigpt4.datasets.builders.base_dataset_builder import BaseDatasetBuilder
 from minigpt4.datasets.datasets.laion_dataset import LaionDataset
 from minigpt4.datasets.datasets.cc_sbu_dataset import CCSBUDataset, CCSBUAlignDataset
 from minigpt4.datasets.datasets.text_caps import TextCapDataset
-from minigpt4.datasets.datasets.llava_dataset import LlavaDetailDataset, LlavaReasonDataset, LlavaConversationDataset
+from minigpt4.datasets.datasets.llava_dataset import (
+    LlavaDetailDataset,
+    LlavaReasonDataset,
+    LlavaConversationDataset,
+)
 from minigpt4.datasets.datasets.unnatural_instruction import UnnaturalDataset
-from minigpt4.datasets.datasets.multitask_conversation import MultiTaskConversationDataset
-from minigpt4.datasets.datasets.flickr import GroundedDetailDataset,CaptionToObjectDataset,PhraseToObjectDataset
+from minigpt4.datasets.datasets.multitask_conversation import (
+    MultiTaskConversationDataset,
+)
+from minigpt4.datasets.datasets.flickr import (
+    GroundedDetailDataset,
+    CaptionToObjectDataset,
+    PhraseToObjectDataset,
+)
 from minigpt4.datasets.datasets.vg_dataset import ReferVisualGenomeDataset
-from minigpt4.datasets.datasets.coco_dataset import ReferCOCODataset, InvReferCOCODataset
+from minigpt4.datasets.datasets.coco_dataset import (
+    ReferCOCODataset,
+    InvReferCOCODataset,
+)
 from minigpt4.datasets.datasets.gqa_datasets import GQADataset
 from minigpt4.datasets.datasets.aok_vqa_datasets import AOKVQADataset
 from minigpt4.datasets.datasets.coco_vqa_datasets import COCOVQADataset
@@ -36,7 +49,7 @@ class MultitaskConversationBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -62,13 +75,12 @@ class UnnaturalInstructionBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
         )
 
         return datasets
-
 
 
 @registry.register_builder("llava_detail")
@@ -87,7 +99,7 @@ class LlavaDetailBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -95,7 +107,6 @@ class LlavaDetailBuilder(BaseDatasetBuilder):
         )
 
         return datasets
-    
 
 
 @registry.register_builder("llava_reason")
@@ -114,7 +125,7 @@ class LlavaReasonBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -122,6 +133,7 @@ class LlavaReasonBuilder(BaseDatasetBuilder):
         )
 
         return datasets
+
 
 @registry.register_builder("llava_conversation")
 class LlavaReasonBuilder(BaseDatasetBuilder):
@@ -139,7 +151,7 @@ class LlavaReasonBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -150,7 +162,6 @@ class LlavaReasonBuilder(BaseDatasetBuilder):
 
 
 class AllRefCOCOBuilder(BaseDatasetBuilder):
-
     def build_datasets(self):
         # at this point, all the annotations and image/videos should be all downloaded to the specified locations.
         logging.info("Building datasets...")
@@ -169,17 +180,17 @@ class AllRefCOCOBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=ann_path,
             vis_root=image_path,
             dataset=build_info.dataset,
-            splitBy=build_info.splitBy
+            splitBy=build_info.splitBy,
         )
 
         return datasets
-    
+
 
 @registry.register_builder("refcoco")
 class RefCOCOBuilder(AllRefCOCOBuilder):
@@ -187,6 +198,7 @@ class RefCOCOBuilder(AllRefCOCOBuilder):
     DATASET_CONFIG_DICT = {
         "default": "configs/datasets/coco_bbox/refcoco.yaml",
     }
+
 
 @registry.register_builder("refcocop")
 class RefCOCOPBuilder(AllRefCOCOBuilder):
@@ -202,6 +214,7 @@ class RefCOCOGBuilder(AllRefCOCOBuilder):
     DATASET_CONFIG_DICT = {
         "default": "configs/datasets/coco_bbox/refcocog.yaml",
     }
+
 
 @registry.register_builder("invrefcoco")
 class RefCOCOBuilder(AllRefCOCOBuilder):
@@ -226,6 +239,7 @@ class RefCOCOGBuilder(AllRefCOCOBuilder):
         "default": "configs/datasets/coco_bbox/invrefcocog.yaml",
     }
 
+
 @registry.register_builder("refvg")
 class RefVisualGenomeBuilder(BaseDatasetBuilder):
     train_dataset_cls = ReferVisualGenomeDataset
@@ -244,7 +258,7 @@ class RefVisualGenomeBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             data_dir=data_dir,
@@ -284,7 +298,8 @@ class TextcapCaptionBuilder(BaseDatasetBuilder):
         )
 
         return datasets
-    
+
+
 @registry.register_builder("coco_vqa")
 class COCOVQABuilder(BaseDatasetBuilder):
     train_dataset_cls = COCOVQADataset
@@ -292,6 +307,7 @@ class COCOVQABuilder(BaseDatasetBuilder):
     DATASET_CONFIG_DICT = {
         "default": "configs/datasets/coco/defaults_vqa.yaml",
     }
+
 
 @registry.register_builder("ok_vqa")
 class OKVQABuilder(COCOVQABuilder):
@@ -315,8 +331,6 @@ class GQABuilder(BaseDatasetBuilder):
     }
 
 
-
-
 @registry.register_builder("flickr_grounded_caption")
 class GroundedCaptionBuilder(BaseDatasetBuilder):
     train_dataset_cls = GroundedDetailDataset
@@ -333,7 +347,7 @@ class GroundedCaptionBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -359,7 +373,7 @@ class CaptionToPhraseBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -367,6 +381,7 @@ class CaptionToPhraseBuilder(BaseDatasetBuilder):
         )
 
         return datasets
+
 
 @registry.register_builder("flickr_ObjectToPhrase")
 class CaptionToPhraseBuilder(BaseDatasetBuilder):
@@ -384,7 +399,7 @@ class CaptionToPhraseBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
             ann_path=build_info.ann_path,
@@ -392,8 +407,6 @@ class CaptionToPhraseBuilder(BaseDatasetBuilder):
         )
 
         return datasets
-
-
 
 
 class DocumentVQABuilder(BaseDatasetBuilder):
@@ -415,11 +428,11 @@ class DocumentVQABuilder(BaseDatasetBuilder):
             vis_processor=self.vis_processors[split],
             text_processor=self.text_processors[split],
             vis_root=build_info.image_path,
-            ann_path=build_info.ann_path
+            ann_path=build_info.ann_path,
         )
 
         return datasets
-    
+
 
 @registry.register_builder("ocrvqa")
 class OCRVQABuilder(DocumentVQABuilder):
@@ -491,7 +504,6 @@ class LaionBuilder(BaseDatasetBuilder):
         return datasets
 
 
-
 @registry.register_builder("coco_caption")
 class COCOCapBuilder(BaseDatasetBuilder):
     train_dataset_cls = COCOCapDataset
@@ -499,7 +511,6 @@ class COCOCapBuilder(BaseDatasetBuilder):
     DATASET_CONFIG_DICT = {
         "default": "configs/datasets/coco/caption.yaml",
     }
-
 
 
 @registry.register_builder("cc_sbu_align")
@@ -525,11 +536,11 @@ class CCSBUAlignBuilder(BaseDatasetBuilder):
 
         # create datasets
         dataset_cls = self.train_dataset_cls
-        datasets['train'] = dataset_cls(
+        datasets["train"] = dataset_cls(
             vis_processor=self.vis_processors["train"],
             text_processor=self.text_processors["train"],
-            ann_paths=[os.path.join(storage_path, 'filter_cap.json')],
-            vis_root=os.path.join(storage_path, 'image'),
+            ann_paths=[os.path.join(storage_path, "filter_cap.json")],
+            vis_root=os.path.join(storage_path, "image"),
         )
 
         return datasets

@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import json
@@ -10,8 +10,6 @@ from typing import Iterable
 
 from torch.utils.data import Dataset, ConcatDataset
 from torch.utils.data.dataloader import default_collate
-
-
 
 
 class BaseDataset(Dataset):
@@ -30,11 +28,11 @@ class BaseDataset(Dataset):
             # print("ann_path", ann_path)
             ann = json.load(open(ann_path, "r"))
             if isinstance(ann, dict):
-                self.annotation.extend(json.load(open(ann_path, "r"))['annotations'])
+                self.annotation.extend(json.load(open(ann_path, "r"))["annotations"])
                 # self.annotation.extend(json.load(open(ann_path, "r")))
             else:
                 self.annotation.extend(json.load(open(ann_path, "r")))
-    
+
         self.vis_processor = vis_processor
         self.text_processor = text_processor
 
@@ -53,7 +51,6 @@ class BaseDataset(Dataset):
     def _add_instance_ids(self, key="instance_id"):
         for idx, ann in enumerate(self.annotation):
             ann[key] = str(idx)
-
 
 
 class ConcatDataset(ConcatDataset):

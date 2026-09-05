@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import logging
@@ -38,7 +38,11 @@ class Config:
 
         # Override the default configuration with user options.
         self.config = OmegaConf.merge(
-            runner_config, model_config, dataset_config,evaluation_dataset_config, user_config
+            runner_config,
+            model_config,
+            dataset_config,
+            evaluation_dataset_config,
+            user_config,
         )
 
     def _validate_runner_config(self, runner_config):
@@ -112,7 +116,6 @@ class Config:
 
         return dataset_config
 
-
     @staticmethod
     def build_evaluation_dataset_config(config):
         datasets = config.get("evaluation_datasets", None)
@@ -125,12 +128,16 @@ class Config:
 
         if datasets is not None:
             for dataset_name in datasets:
-                builder_cls = registry.get_builder_class(dataset_name)
+                _ = registry.get_builder_class(dataset_name)
 
                 # hierarchy override, customized config > default config
                 dataset_config = OmegaConf.merge(
                     dataset_config,
-                    {"evaluation_datasets": {dataset_name: config["evaluation_datasets"][dataset_name]}},
+                    {
+                        "evaluation_datasets": {
+                            dataset_name: config["evaluation_datasets"][dataset_name]
+                        }
+                    },
                 )
 
         return dataset_config
@@ -183,7 +190,7 @@ class Config:
             else:
                 logging.warning(f"No dataset named '{dataset}' in config. Skipping")
 
-        logging.info(f"\n======  Model Attributes  ======")
+        logging.info("\n======  Model Attributes  ======")
         logging.info(self._convert_node_to_json(self.config.model))
 
     def _convert_node_to_json(self, node):

@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import time
@@ -24,9 +24,9 @@ class MultiIterLoader:
     def __init__(self, loaders, ratios=None):
         # assert all loaders has __next__ method
         for loader in loaders:
-            assert hasattr(
-                loader, "__next__"
-            ), "Loader {} has no __next__ method.".format(loader)
+            assert hasattr(loader, "__next__"), (
+                "Loader {} has no __next__ method.".format(loader)
+            )
 
         if ratios is None:
             ratios = [1.0] * len(loaders)

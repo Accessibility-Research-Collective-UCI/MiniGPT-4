@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import datetime
@@ -24,7 +24,7 @@ from minigpt4.common.dist_utils import (
 )
 from minigpt4.common.registry import registry
 from minigpt4.common.utils import is_url
-from minigpt4.datasets.data_utils import concat_datasets, reorg_datasets_by_split, ChainDataset
+from minigpt4.datasets.data_utils import reorg_datasets_by_split, ChainDataset
 from minigpt4.datasets.datasets.dataloader_utils import (
     IterLoader,
     MultiIterLoader,
@@ -88,7 +88,9 @@ class RunnerBase:
             if self.use_distributed:
                 if self._wrapped_model is None:
                     self._wrapped_model = DDP(
-                        self._model, device_ids=[self.config.run_cfg.gpu], find_unused_parameters=True
+                        self._model,
+                        device_ids=[self.config.run_cfg.gpu],
+                        find_unused_parameters=True,
                     )
             else:
                 self._wrapped_model = self._model
@@ -161,7 +163,7 @@ class RunnerBase:
 
             if iters_per_epoch is None:
                 try:
-                    iters_per_epoch = len(self.dataloaders['train'])
+                    iters_per_epoch = len(self.dataloaders["train"])
                 except (AttributeError, TypeError):
                     iters_per_epoch = 10000
 
@@ -197,7 +199,6 @@ class RunnerBase:
             dict: {split_name: (tuples of) dataloader}
         """
         if self._dataloaders is None:
-
             # concatenate map-style datasets and chain wds.DataPipe datasets separately
             # training set becomes a tuple (ConcatDataset, ChainDataset), both are
             # optional but at least one of them is required. The resultant ConcatDataset
@@ -206,8 +207,10 @@ class RunnerBase:
                 "dataset_ratios not specified, datasets will be concatenated (map-style datasets) or chained (webdataset.DataPipeline)."
             )
 
-            batch_sizes = {dataset_name: getattr(self.config.datasets_cfg, dataset_name).batch_size
-                           for dataset_name in self.datasets.keys()}
+            batch_sizes = {
+                dataset_name: getattr(self.config.datasets_cfg, dataset_name).batch_size
+                for dataset_name in self.datasets.keys()
+            }
             datasets, batch_sizes = reorg_datasets_by_split(self.datasets, batch_sizes)
             self.datasets = datasets
             # self.datasets = concat_datasets(datasets)
@@ -221,7 +224,7 @@ class RunnerBase:
                     num_records = sum(
                         [
                             len(d)
-                            if not type(d) in [wds.DataPipeline, ChainDataset]
+                            if type(d) not in [wds.DataPipeline, ChainDataset]
                             else 0
                             for d in self.datasets[split_name]
                         ]
@@ -387,9 +390,9 @@ class RunnerBase:
                     )
                     if val_log is not None:
                         if is_main_process():
-                            assert (
-                                "agg_metrics" in val_log
-                            ), "No agg_metrics found in validation log."
+                            assert "agg_metrics" in val_log, (
+                                "No agg_metrics found in validation log."
+                            )
 
                             agg_metrics = val_log["agg_metrics"]
                             if agg_metrics > best_agg_metric and split_name == "val":
@@ -555,7 +558,7 @@ class RunnerBase:
             datasets, batch_sizes, is_trains, collate_fns
         ):
             if isinstance(dataset, list) or isinstance(dataset, tuple):
-                if hasattr(dataset[0], 'sample_ratio') and dataset_ratios is None:
+                if hasattr(dataset[0], "sample_ratio") and dataset_ratios is None:
                     dataset_ratios = [d.sample_ratio for d in dataset]
                 loader = MultiIterLoader(
                     loaders=[
@@ -609,7 +612,7 @@ class RunnerBase:
         checkpoint = torch.load(checkpoint_path, map_location="cpu")
         try:
             model.load_state_dict(checkpoint["model"])
-        except RuntimeError as e:
+        except RuntimeError:
             logging.warning(
                 """
                 Key mismatch when loading checkpoint. This is expected if only part of the model is saved.
@@ -634,7 +637,9 @@ class RunnerBase:
             raise RuntimeError("checkpoint url or path is invalid")
 
         state_dict = checkpoint["model"]
-        message = self.unwrap_dist_model(self.model).load_state_dict(state_dict,strict=False)
+        message = self.unwrap_dist_model(self.model).load_state_dict(
+            state_dict, strict=False
+        )
 
         self.optimizer.load_state_dict(checkpoint["optimizer"])
         if self.scaler and "scaler" in checkpoint:

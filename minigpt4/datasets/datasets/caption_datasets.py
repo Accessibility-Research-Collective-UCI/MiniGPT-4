@@ -1,8 +1,8 @@
 """
- Copyright (c) 2022, salesforce.com, inc.
- All rights reserved.
- SPDX-License-Identifier: BSD-3-Clause
- For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+Copyright (c) 2022, salesforce.com, inc.
+All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
+For full license text, see the LICENSE_Lavis file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 """
 
 import os
@@ -43,11 +43,10 @@ class CaptionDataset(BaseDataset, __DisplMixin):
                 n += 1
 
     def __getitem__(self, index):
-
         # TODO this assumes image input, not general enough
         ann = self.annotation[index]
 
-        img_file = '{:0>12}.jpg'.format(ann["image_id"])
+        img_file = "{:0>12}.jpg".format(ann["image_id"])
         image_path = os.path.join(self.vis_root, img_file)
         image = Image.open(image_path).convert("RGB")
 
@@ -59,7 +58,6 @@ class CaptionDataset(BaseDataset, __DisplMixin):
             "text_input": caption,
             "image_id": self.img_ids[ann["image_id"]],
         }
-
 
 
 class COCOCaptionDataset(BaseDataset, __DisplMixin):
@@ -74,7 +72,7 @@ class COCOCaptionDataset(BaseDataset, __DisplMixin):
         n = 0
 
         self.filter_anntation = []
-        
+
         for ann in self.annotation:
             if "train" in ann["image"]:
                 self.filter_anntation.append(ann)
@@ -87,26 +85,26 @@ class COCOCaptionDataset(BaseDataset, __DisplMixin):
                 n += 1
 
         self.instruction_pool = [
-            'Briefly describe this image.',
-            'Provide a concise depiction of this image.',
-            'Present a short description of this image.',
-            'Summarize this image in a few words.',
-            'A short image caption:',
-            'A short image description:',
-            'A photo of ',
-            'An image that shows ',
-            'Write a short description for the image. ',
-            'Write a description for the photo.',
-            'Provide a description of what is presented in the photo.',
-            'Briefly describe the content of the image.',
-            'Can you briefly explain what you see in the image?',
-            'Could you use a few words to describe what you perceive in the photo?',
-            'Please provide a short depiction of the picture.',
-            'Using language, provide a short account of the image.',
-            'Use a few words to illustrate what is happening in the picture.',
+            "Briefly describe this image.",
+            "Provide a concise depiction of this image.",
+            "Present a short description of this image.",
+            "Summarize this image in a few words.",
+            "A short image caption:",
+            "A short image description:",
+            "A photo of ",
+            "An image that shows ",
+            "Write a short description for the image. ",
+            "Write a description for the photo.",
+            "Provide a description of what is presented in the photo.",
+            "Briefly describe the content of the image.",
+            "Can you briefly explain what you see in the image?",
+            "Could you use a few words to describe what you perceive in the photo?",
+            "Please provide a short depiction of the picture.",
+            "Using language, provide a short account of the image.",
+            "Use a few words to illustrate what is happening in the picture.",
         ]
-    def __getitem__(self, index):
 
+    def __getitem__(self, index):
         # TODO this assumes image input, not general enough
         ann = self.annotation[index]
 
@@ -126,6 +124,7 @@ class COCOCaptionDataset(BaseDataset, __DisplMixin):
             "instruction_input": instruction,
         }
 
+
 class CaptionEvalDataset(BaseDataset, __DisplMixin):
     def __init__(self, vis_processor, text_processor, vis_root, ann_paths):
         """
@@ -136,7 +135,6 @@ class CaptionEvalDataset(BaseDataset, __DisplMixin):
         super().__init__(vis_processor, text_processor, vis_root, ann_paths)
 
     def __getitem__(self, index):
-
         ann = self.annotation[index]
 
         image_path = os.path.join(self.vis_root, ann["image"])
